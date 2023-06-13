@@ -1,0 +1,36 @@
+save_flag: true
+
+patchworkpp:
+    
+    sensor_height: 1.723
+
+    mode: "czm" #Patchwork++的模式。在这种情况下，它是“czm”。
+    verbose: false   # To check effect of uprightness/elevation/flatness 是否输出详细信息
+    visualize: true  # Ground Likelihood Estimation is visualized 是否可视化地面可能性估计
+    
+    # Ground Plane Fitting parameters
+    num_iter: 3             # Number of iterations for ground plane estimation using PCA.使用PCA进行地面平面估计的迭代次数
+    num_lpr: 20             # 最多选择的点数作为最低点代表 Maximum number of points to be selected as lowest points representative.
+    num_min_pts: 10         # 在每个补丁中估计为地面平面的最小点数 Minimum number of points to be estimated as ground plane in each patch.
+    th_seeds: 0.3           # 用于初始种子选择的最低点代表的阈值 threshold for lowest point representatives using in initial seeds selection of ground points.
+    th_dist: 0.125          # 地面厚度的阈值 threshold for thickenss of ground.
+    th_seeds_v: 0.25        # 用于初始种子选择的垂直结构点的最低点代表的阈值 threshold for lowest point representatives using in initial seeds selection of vertical structural points.
+    th_dist_v: 0.1          # 垂直结构的厚度阈值 threshold for thickenss of vertical structure.
+    max_r: 80.0             # 地面估计区域的最大范围 max_range of ground estimation area
+    min_r: 2.7              # 地面估计区域的最小范围 min_range of ground estimation area
+    uprightness_thr: 0.707  # 在地面可能性估计中使用的垂直度阈值 threshold of uprightness using in Ground Likelihood Estimation(GLE). Please refer paper for more information about GLE.
+
+    adaptive_seed_selection_margin: -1.2 # 过滤掉传感器高度*-1.2以下的点。 The points below the adaptive_seed_selection_margin * sensor_height are filtered
+    czm:
+        num_zones: 4 #czm模式中的区域数
+        num_sectors_each_zone: [16, 32, 54, 32] #每个区域中的扇区数
+        mum_rings_each_zone: [2, 4, 4, 4] #每个区域中的环数
+        elevation_thresholds:  [0.0, 0.0, 0.0, 0.0] # 每个环的高程阈值 threshold of elevation for each ring using in GLE. Those values are updated adaptively.
+        flatness_thresholds:  [0.0, 0.0, 0.0, 0.0]  # 每个环的平坦度阈值 threshold of flatness for each ring using in GLE. Those values are updated adaptively.
+
+    enable_RNR : true #是否启用噪声点过滤
+    enable_RVPF : true # 是否启用反射率验证点过滤
+    enable_TGR : true #是否启用地面移除
+    
+    RNR_ver_angle_thr : -15.0 # 噪声点的垂直角度阈值 Noise points vertical angle threshold. Downward rays of LiDAR are more likely to generate severe noise points.
+    RNR_intensity_thr : 0.2   # 噪声点的反射率阈值 Noise points intensity threshold. The reflected points have relatively small intensity than others.
