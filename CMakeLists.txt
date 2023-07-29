@@ -2,7 +2,7 @@ option(BUILD_JSK_PKGS "Enable building of required components of jsk_recognition
 
 if(BUILD_JSK_PKGS)
     add_subdirectory(include/jsk_recognition_msgs)
-#     add_subdirectory(include/jsk_rviz_plugins) #TODO: allow building of rviz plugins as well
+    #     add_subdirectory(include/jsk_rviz_plugins) #TODO: allow building of rviz plugins as well
 endif()
 
 cmake_minimum_required(VERSION 3.0.2)

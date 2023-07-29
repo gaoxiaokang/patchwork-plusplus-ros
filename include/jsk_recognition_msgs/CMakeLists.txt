@@ -6,6 +6,7 @@ find_package(catkin REQUIRED
 add_message_files(
   FILES
   PolygonArray.msg
+  ground_estimate.msg
   )
 
 generate_messages(

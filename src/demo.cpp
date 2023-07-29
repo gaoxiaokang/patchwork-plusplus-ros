@@ -1,7 +1,7 @@
 #include <iostream>
 // For disable PCL complile lib, to use PointXYZIR
 #define PCL_NO_PRECOMPILE
-
+#include <jsk_recognition_msgs/ground_estimate.h>
 #include <ros/ros.h>
 #include <signal.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -17,6 +17,7 @@ boost::shared_ptr<PatchWorkpp<PointType>> PatchworkppGroundSeg;
 ros::Publisher pub_cloud;
 ros::Publisher pub_ground;
 ros::Publisher pub_non_ground;
+ros::Publisher EstimatePublisher;
 
 template<typename T>
 sensor_msgs::PointCloud2 cloud2msg(pcl::PointCloud<T> cloud, std::string frame_id = "map") {
@@ -40,6 +41,19 @@ void callbackCloud(const sensor_msgs::PointCloud2::Ptr &cloud_msg)
 
     cout << "\033[1;32m" << "Result: Input PointCloud: " << pc_curr.size() << " -> Ground: " << pc_ground.size() <<  "/ NonGround: " << pc_non_ground.size()
          << " (running_time: " << time_taken << " sec)" << "\033[0m" << endl;
+    
+    //pcl->rosmsg
+    auto msg_curr = cloud2msg(pc_curr);
+    auto msg_ground = cloud2msg(pc_ground);
+    //cloud_estimate
+    jsk_recognition_msgs::ground_estimate cloud_estimate;
+    cloud_estimate.header = cloud_msg->header;
+    cloud_estimate.curr = msg_curr;
+    cloud_estimate.ground = msg_ground;
+
+
+    //cloud_estimate包含curr与ground
+    EstimatePublisher.publish(cloud_estimate);
 
     pub_cloud.publish(cloud2msg(pc_curr));
     pub_ground.publish(cloud2msg(pc_ground));
@@ -60,6 +74,9 @@ int main(int argc, char**argv) {
     pub_cloud       = nh.advertise<sensor_msgs::PointCloud2>("/patchworkpp/cloud", 100, true);
     pub_ground      = nh.advertise<sensor_msgs::PointCloud2>("/patchworkpp/ground", 100, true);
     pub_non_ground  = nh.advertise<sensor_msgs::PointCloud2>("/patchworkpp/nonground", 100, true);
+    
+    /* Publisher for combined msg of source cloud, ground cloud */
+    EstimatePublisher = nh.advertise<jsk_recognition_msgs::ground_estimate>("/benchmark/ground_estimate", 100, true);
     
     ros::Subscriber sub_cloud = nh.subscribe(cloud_topic, 100, callbackCloud);
 
